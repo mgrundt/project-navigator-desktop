@@ -1,0 +1,28 @@
+{
+  "productName": "Project Navigator Desktop",
+  "version": "0.1.0",
+  "identifier": "com.example.projectnavigator.desktop",
+  "build": {
+    "beforeBuildCommand": "",
+    "beforeDevCommand": "",
+    "devUrl": "http://localhost:4173",
+    "frontendDist": "../dist"
+  },
+  "app": {
+    "security": {
+      "csp": null
+    },
+    "windows": [
+      {
+        "label": "main",
+        "title": "Project Navigator Desktop",
+        "resizable": true,
+        "fullscreen": false,
+        "width": 1200,
+        "height": 800
+      }
+    ]
+  },
+  "bundle": {},
+  "plugins": {}
+}
