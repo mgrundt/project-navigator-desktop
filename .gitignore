@@ -4,5 +4,13 @@ dist/
 target/
 src-tauri/target/
 .env
+.next/
+backend/.venv/
 .DS_Store
 *.db
+*.tsbuildinfo
+AGENTS.md
+CLAUDE.md
+
+__pycache__/
+*.pyc
