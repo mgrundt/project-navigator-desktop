@@ -43,6 +43,9 @@ export type Task = {
   stream_name?: string | null;
   employee_name?: string | null;
   last_comment?: string | null;
+  first_checkup_date?: string | null;
+  last_checkup_date?: string | null;
+  checkup_count?: number;
   steps?: {
     id: string;
     task_id: string;

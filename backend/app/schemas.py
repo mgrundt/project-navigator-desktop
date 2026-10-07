@@ -115,6 +115,9 @@ class TaskOut(BaseModel):
     stream_name: Optional[str] = None
     employee_name: Optional[str] = None
     last_comment: Optional[str] = None
+    first_checkup_date: Optional[str] = None
+    last_checkup_date: Optional[str] = None
+    checkup_count: int = 0
     steps: list[TaskStepOut] = Field(default_factory=list)
 
 

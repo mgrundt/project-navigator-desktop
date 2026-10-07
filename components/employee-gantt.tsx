@@ -26,6 +26,9 @@ type GanttBar = {
   start: Date;
   end: Date;
   lane: number;
+  checkupCount: number;
+  firstCheckupDate?: string | null;
+  lastCheckupDate?: string | null;
 };
 
 type GanttRow = {
@@ -57,14 +60,21 @@ function startOfMonth(date: Date): Date {
 }
 
 function taskWindow(task: Task): { start: Date; end: Date } | null {
-  const start = parseIsoDate(task.start_date) ?? parseIsoDate(task.project_start_date) ?? parseIsoDate(task.created_at);
+  const firstCheckup = parseIsoDate(task.first_checkup_date);
+  const lastCheckup = parseIsoDate(task.last_checkup_date);
+
+  let start =
+    firstCheckup ??
+    parseIsoDate(task.start_date) ??
+    parseIsoDate(task.created_at) ??
+    parseIsoDate(task.project_start_date);
   if (!start) return null;
 
-  const due = parseIsoDate(task.due_date);
-  const followUp = parseIsoDate(task.next_follow_up_date);
-  const projectEnd = parseIsoDate(task.project_end_date);
-  let end = due ?? followUp ?? projectEnd ?? addDays(start, 14);
-  if (end.getTime() < start.getTime()) {
+  let end = lastCheckup ?? parseIsoDate(task.last_check_date) ?? parseIsoDate(task.due_date);
+  if (!end) {
+    end = addDays(start, 1);
+  }
+  if (end.getTime() <= start.getTime()) {
     end = addDays(start, 1);
   }
   return { start, end };
@@ -145,7 +155,7 @@ export function EmployeeGantt({
     ? employeeId
     : (people[0]?.id ?? "");
 
-  const { rows, rangeStart, rangeEnd, span, todayLeft, parallelToday, ticks } = useMemo(() => {
+  const { rows, rangeStart, rangeEnd, span, todayLeft, parallelTasksToday, parallelProjectsToday, ticks } = useMemo(() => {
     const selected = tasks.filter((task) => {
       if (task.employee_id !== selectedId) return false;
       if (!includeDone && task.status === "Abgeschlossen") return false;
@@ -161,19 +171,22 @@ export function EmployeeGantt({
     const allDates: Date[] = [];
 
     [...grouped.entries()].forEach(([projectId, projectTasks], index) => {
-      const prepared = projectTasks
-        .map((task) => {
-          const window = taskWindow(task);
-          if (!window) return null;
-          return {
+      const prepared: Omit<GanttBar, "lane">[] = [];
+      for (const task of projectTasks) {
+        const window = taskWindow(task);
+        if (window) {
+          prepared.push({
             id: task.id,
             title: task.title,
             status: task.status,
             start: window.start,
             end: window.end,
-          };
-        })
-        .filter((item): item is Omit<GanttBar, "lane"> => item !== null);
+            checkupCount: task.checkup_count ?? 0,
+            firstCheckupDate: task.first_checkup_date,
+            lastCheckupDate: task.last_checkup_date,
+          });
+        }
+      }
 
       if (prepared.length === 0) return;
 
@@ -206,7 +219,12 @@ export function EmployeeGantt({
       : addDays(today, 60);
     const rangeMs = Math.max(maxDate.getTime() - minDate.getTime(), 24 * 60 * 60 * 1000);
 
-    const parallel = built.filter(
+    const parallelTasksToday = built
+      .flatMap((row) => row.bars)
+      .filter((bar) => bar.start.getTime() <= today.getTime() && bar.end.getTime() >= today.getTime())
+      .length;
+
+    const parallelProjectsToday = built.filter(
       (row) => row.projectStart.getTime() <= today.getTime() && row.projectEnd.getTime() >= today.getTime(),
     ).length;
 
@@ -216,7 +234,8 @@ export function EmployeeGantt({
       rangeEnd: maxDate,
       span: rangeMs,
       todayLeft: percent(today.getTime(), minDate.getTime(), rangeMs),
-      parallelToday: parallel,
+      parallelTasksToday,
+      parallelProjectsToday,
       ticks: monthTicks(minDate, maxDate),
     };
   }, [tasks, selectedId, includeDone]);
@@ -240,7 +259,7 @@ export function EmployeeGantt({
         <div>
           <CardTitle>Parallele Projektauslastung</CardTitle>
           <CardDescription>
-            Gantt-Zeitstrahl je Mitarbeiter: Balken von Projektstart bzw. Aufgabenerstellung bis Deadline.
+            Gantt-Zeitstrahl je Mitarbeiter: Balken vom ersten bis zum letzten Checkup (parallele Aufgabenbearbeitung).
           </CardDescription>
         </div>
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
@@ -261,7 +280,7 @@ export function EmployeeGantt({
       <CardContent className="space-y-4">
         <div className="flex flex-wrap gap-3 text-sm">
           <span className="rounded-full bg-primary/10 px-3 py-1 font-medium text-primary">
-            {parallelToday} parallele Projekte heute
+            {parallelTasksToday} {parallelTasksToday === 1 ? "parallele Aufgabe" : "parallele Aufgaben"} heute ({parallelProjectsToday} {parallelProjectsToday === 1 ? "Projekt" : "Projekte"})
           </span>
           <span className="text-muted-foreground">
             {rangeStart.toLocaleDateString("de-DE")} – {rangeEnd.toLocaleDateString("de-DE")}
@@ -356,9 +375,16 @@ export function EmployeeGantt({
                             <div className="pointer-events-none absolute top-full left-0 z-20 mt-1 hidden w-max max-w-xs rounded-md bg-foreground px-2 py-1.5 text-xs text-background shadow-md group-hover:block">
                               <p className="font-medium">{bar.title}</p>
                               <p>
-                                {bar.start.toLocaleDateString("de-DE")} – {bar.end.toLocaleDateString("de-DE")}
+                                {bar.checkupCount > 0
+                                  ? `Checkups: ${bar.start.toLocaleDateString("de-DE")} – ${bar.end.toLocaleDateString("de-DE")}`
+                                  : `Zeitraum: ${bar.start.toLocaleDateString("de-DE")} – ${bar.end.toLocaleDateString("de-DE")}`}
                               </p>
-                              <p>{bar.status}</p>
+                              <p>
+                                {bar.status}
+                                {bar.checkupCount > 0
+                                  ? ` · ${bar.checkupCount} Checkup${bar.checkupCount > 1 ? "s" : ""}`
+                                  : " · Kein Checkup erfasst"}
+                              </p>
                             </div>
                           </div>
                         );
@@ -376,7 +402,7 @@ export function EmployeeGantt({
         )}
 
         <div className="flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
-          <span>Balkenfarbe = Projekt · Länge = Start bis Deadline</span>
+          <span>Balkenfarbe = Projekt · Länge = Erster bis letzter Checkup</span>
           <StatusBadge status="In Bearbeitung" />
           <span>volle Deckkraft</span>
           <StatusBadge status="Wartet" />

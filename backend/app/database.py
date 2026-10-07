@@ -61,9 +61,11 @@ def rows_to_dicts(rows: list[sqlite3.Row]) -> list[dict[str, Any]]:
 
 @contextmanager
 def get_connection() -> Iterator[sqlite3.Connection]:
-    conn = sqlite3.connect(resolve_db_path())
+    conn = sqlite3.connect(resolve_db_path(), timeout=10.0)
     conn.row_factory = sqlite3.Row
     conn.execute("PRAGMA foreign_keys = ON;")
+    conn.execute("PRAGMA journal_mode = WAL;")
+    conn.execute("PRAGMA busy_timeout = 5000;")
     try:
         yield conn
         conn.commit()
@@ -340,7 +342,10 @@ TASK_DETAILS_SELECT = """
         p.end_date AS project_end_date,
         p.stream_id,
         s.name AS stream_name,
-        e.name AS employee_name
+        e.name AS employee_name,
+        (SELECT MIN(date) FROM updates u WHERE u.task_id = t.id) AS first_checkup_date,
+        (SELECT MAX(date) FROM updates u WHERE u.task_id = t.id) AS last_checkup_date,
+        (SELECT COUNT(*) FROM updates u WHERE u.task_id = t.id) AS checkup_count
     FROM tasks t
     JOIN projects p ON t.project_id = p.id
     JOIN streams s ON p.stream_id = s.id
