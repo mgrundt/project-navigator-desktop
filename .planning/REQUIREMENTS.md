@@ -19,9 +19,9 @@
 
 ### App Lifecycle & Verification
 
-- [ ] **APP-01**: FastAPI Backend startet fehlerfrei auf Port 8000.
-- [ ] **APP-02**: Next.js Frontend kompiliert fehlerfrei (`npx tsc --noEmit`, `npm run build`) und startet auf Port 3000.
-- [ ] **APP-03**: Das Gantt-Chart unter `/kapazitaeten` zeigt verifizierte parallele Tasks an.
+- [x] **APP-01**: FastAPI Backend startet fehlerfrei auf Port 8000.
+- [x] **APP-02**: Next.js Frontend kompiliert fehlerfrei (`npx tsc --noEmit`, `npm run build`) und startet auf Port 3000.
+- [x] **APP-03**: Das Gantt-Chart unter `/kapazitaeten` zeigt verifizierte parallele Tasks an.
 
 ## Traceability
 
@@ -33,6 +33,6 @@
 | GANTT-04 | Phase 1: Gantt-Timeline | Completed |
 | DEBT-01 | Phase 2: Backend-Härtung | Completed |
 | DEBT-02 | Phase 2: Backend-Härtung | Completed |
-| APP-01 | Phase 3: Start & Verifikation | Pending |
-| APP-02 | Phase 3: Start & Verifikation | Pending |
-| APP-03 | Phase 3: Start & Verifikation | Pending |
+| APP-01 | Phase 3: Start & Verifikation | Completed |
+| APP-02 | Phase 3: Start & Verifikation | Completed |
+| APP-03 | Phase 3: Start & Verifikation | Completed |
