@@ -25,3 +25,4 @@ Progress: [==========] 100%
 ### Decisions
 - [2026-10-05]: Gantt-Zeitstrahl wird auf erstes Checkup-Datum und letztes Checkup-Datum umgestellt.
 - [2026-10-07]: Prioritätenkette bestätigt: 1. Gantt-Timeline, 2. Backend-Härtung, 3. Anwendungsstart & Verifikation.
+

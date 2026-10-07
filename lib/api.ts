@@ -93,6 +93,7 @@ export const api = {
   taskSteps: (id: string) => request<TaskStep[]>(`/api/tasks/${id}/steps`),
   saveTaskSteps: (id: string, steps: { description: string; is_completed: boolean }[]) =>
     request<TaskStep[]>(`/api/tasks/${id}/steps`, { method: "PUT", body: JSON.stringify(steps) }),
+  taskHistory: (id: string) => request<TaskUpdateEntry[]>(`/api/tasks/${id}/history`),
 };
 
 export const pdfUrls = {

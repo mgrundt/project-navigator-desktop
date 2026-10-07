@@ -93,6 +93,18 @@ class TaskStepOut(BaseModel):
     is_completed: bool = False
 
 
+class UpdateOut(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: Optional[str] = None
+    task_id: Optional[str] = None
+    date: str
+    status_entry: str
+    comment: str = ""
+    next_follow_up_date: Optional[str] = None
+    created_at: Optional[str] = None
+
+
 class TaskOut(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
@@ -119,24 +131,13 @@ class TaskOut(BaseModel):
     last_checkup_date: Optional[str] = None
     checkup_count: int = 0
     steps: list[TaskStepOut] = Field(default_factory=list)
+    history: list[UpdateOut] = Field(default_factory=list)
 
 
 class TaskUpdateCreate(BaseModel):
     status_entry: str
     comment: str = ""
     next_follow_up_date: Optional[date] = None
-
-
-class UpdateOut(BaseModel):
-    model_config = ConfigDict(from_attributes=True)
-
-    id: Optional[str] = None
-    task_id: Optional[str] = None
-    date: str
-    status_entry: str
-    comment: str = ""
-    next_follow_up_date: Optional[str] = None
-    created_at: Optional[str] = None
 
 
 class DashboardStats(BaseModel):

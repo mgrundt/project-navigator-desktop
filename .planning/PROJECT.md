@@ -42,3 +42,4 @@ Transparente, verlässliche Visualisierung und Nachverfolgung aktiver, parallele
 |---|---|---|
 | 2026-10-05 | Gantt-Balken basiert auf Checkup-Zeitraum | Vorherige Deadline-Darstellung spiegelte nicht die reale, aktuelle Parallelbearbeitung wider. |
 | 2026-10-07 | GSD Planungsstruktur aufgesetzt | Strukturierte Roadmap mit Phasen: Phase 1 (Gantt), Phase 2 (Backend-Härtung), Phase 3 (App-Start). |
+

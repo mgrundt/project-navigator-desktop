@@ -463,7 +463,10 @@ def list_today_tasks() -> list[dict[str, Any]]:
                 WHERE task_id = t.id
                 ORDER BY created_at DESC
                 LIMIT 1
-            ) AS last_comment
+            ) AS last_comment,
+            (SELECT MIN(date) FROM updates u WHERE u.task_id = t.id) AS first_checkup_date,
+            (SELECT MAX(date) FROM updates u WHERE u.task_id = t.id) AS last_checkup_date,
+            (SELECT COUNT(*) FROM updates u WHERE u.task_id = t.id) AS checkup_count
         FROM tasks t
         JOIN projects p ON t.project_id = p.id
         JOIN streams s ON p.stream_id = s.id

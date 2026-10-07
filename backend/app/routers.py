@@ -132,6 +132,7 @@ def today_tasks() -> list[TaskOut]:
     items = []
     for item in db.list_today_tasks():
         item["steps"] = db.get_steps_for_task(item["id"])
+        item["history"] = db.get_task_history(item["id"])
         items.append(TaskOut(**item))
     return items
 

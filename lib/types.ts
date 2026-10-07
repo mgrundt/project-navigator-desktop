@@ -53,6 +53,7 @@ export type Task = {
     description: string;
     is_completed: boolean;
   }[];
+  history?: TaskUpdateEntry[];
 };
 
 export type UpcomingTask = Task & {

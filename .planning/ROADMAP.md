@@ -45,3 +45,4 @@ Strukturierte Umsetzung der drei priorisierten Schwerpunkte:
 1. FastAPI Backend läuft auf Port 8000 und liefert `http://localhost:8000/docs` sowie `/api/capacity`.
 2. Next.js Frontend läuft auf Port 3000 und rendert das aktualisierte Gantt-Diagramm fehlerfrei.
 3. Die parallele Aufgabenlast heute zeigt die aktuellen aktiven Tasks an.
+
