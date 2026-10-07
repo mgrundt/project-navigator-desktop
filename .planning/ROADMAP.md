@@ -2,47 +2,61 @@
 
 ## Overview
 
-Strukturierte Umsetzung der drei priorisierten Schwerpunkte:
-1. Umstellung des Gantt-Diagramms auf den Checkup-Zeitraum (erster bis letzter Checkup) zur Visualisierung der echten Parallelarbeit.
-2. Behebung dringender technischer Schulden und Härtung des Backends (Dependency-Vollständigkeit und SQLite WAL-Modus).
-3. Start und ganzheitliche End-to-End-Verifikation beider Applikationsdienste.
+Strukturierte Meilenstein-Planung für Project Navigator Desktop.
 
-## Phases
+---
 
-- [x] **Phase 1: Checkup-basierte Gantt-Timeline** – Balken und Auslastungsmetriken vom ersten bis zum letzten Checkup.
+## Milestone v2.0: Dashboard-Umbau & Checkup-Integration
+
+Zentralisierung der Aufgabenbearbeitung und Checkups im Dashboard; Bereinigung der Navigation.
+
+### Phases v2.0
+
+- [ ] **Phase 4: Navigation & Data Basis** – Menüpunkt „Heute im Team“ entfernen; Dashboard API/Loader um Projekte & Mitarbeiter erweitern.
+- [ ] **Phase 5: Task Edit & Delete Modal** – Interaktives Modal in der Dashboard-Tabelle zur vollständigen Bearbeitung und Löschung aller Task-Parameter.
+- [ ] **Phase 6: Checkup-Workflow & Historie im Dashboard** – Neuer Checkup-Eintrag & scrollbare Verlaufshistorie direkt im Task-Modal.
+- [ ] **Phase 7: Live-Verifikation & Workflow-Test** – End-to-End-Test der Änderungen im laufenden System.
+
+### Phase Details v2.0
+
+#### Phase 4: Navigation & Data Basis
+**Goal**: Menüverschlankung und Bereitstellung aller für das Dashboard-Modal nötigen Stamm- und Referenzdaten.  
+**Depends on**: Milestone v1.0  
+**Requirements**: NAV-01, DASH-01  
+**Success Criteria**:
+1. Menüpunkt `/heute` ist weder in der Desktop-Sidebar noch im mobilen Menü sichtbar.
+2. `GET /api/dashboard` bzw. Dashboard-Loader liefert `projects` und `employees` für Dropdowns.
+
+#### Phase 5: Task Edit & Delete Modal
+**Goal**: Vollständige Bearbeitung und Löschung einer Aufgabe direkt aus der Dashboard-Tabelle.  
+**Depends on**: Phase 4  
+**Requirements**: MODAL-01, MODAL-02, MODAL-03  
+**Success Criteria**:
+1. Klick auf eine Zeile oder einen Bearbeiten-Button öffnet das Dialog-Modal.
+2. Formular erlaubt Änderung aller Felder: Titel, Beschreibung, Projekt, Mitarbeiter, Kategorie, Status, Startdatum, Deadline, Wiedervorlage.
+3. Änderungen werden per `PATCH /api/tasks/{id}` gespeichert und die Dashboard-Tabelle aktualisiert sich sofort.
+4. Button „Aufgabe löschen“ löscht die Aufgabe nach Bestätigung via `DELETE /api/tasks/{id}`.
+
+#### Phase 6: Checkup-Workflow & Historie im Dashboard
+**Goal**: Integration der Checkup-Erfassung und Historie direkt im Dashboard.  
+**Depends on**: Phase 5  
+**Requirements**: CHECKUP-01, CHECKUP-02  
+**Success Criteria**:
+1. Im Task-Modal können neuer Status, Kommentar und Wiedervorlage eingetragen und gespeichert werden (`POST /api/tasks/{id}/updates`).
+2. Die bisherige Checkup-Historie wird übersichtlich und scrollbar mit Datum, Status-Badge, Wiedervorlage und Kommentar angezeigt.
+3. Nach dem Speichern eines Checkups aktualisieren sich Historie und Dashboard-KPIs sofort.
+
+#### Phase 7: Live-Verifikation & Workflow-Test
+**Goal**: Sicherstellung der fehlerfreien Gesamtfunktion in Frontend und Backend.  
+**Depends on**: Phase 6  
+**Success Criteria**:
+1. `npx tsc --noEmit` und Next.js Build laufen fehlerfrei durch.
+2. Dashboard unter `http://localhost:3000` öffnet das Modal, editiert Aufgaben, erfasst Checkups und löscht Tasks verifiziert.
+
+---
+
+## Completed: Milestone v1.0
+
+- [x] **Phase 1: Checkup-basierte Gantt-Timeline** – Balken und Auslastungsmetrik vom ersten bis zum letzten Checkup.
 - [x] **Phase 2: Backend-Härtung & Technische Schulden** – Absicherung der SQLite-Verbindungen (WAL-Modus) und `requirements.txt`.
-- [ ] **Phase 3: Start & Verifikation der Gesamtanwendung** – Start beider Services und End-to-End-Funktionstest.
-
-## Phase Details
-
-### Phase 1: Checkup-basierte Gantt-Timeline
-**Goal**: Visualisierung der tatsächlich parallel laufenden Aufgaben anhand der Checkup-Historie im Gantt-Chart.  
-**Depends on**: Nothing (Datenbankabfrage in `TASK_DETAILS_SELECT` bereits vorbereitet)  
-**Requirements**: GANTT-01, GANTT-02, GANTT-03, GANTT-04  
-**Status**: Abgeschlossen  
-**Success Criteria**:
-1. Jeder Task-Balken beginnt am Datum des ersten Checkups und endet am Datum des letzten Checkups. [Erfüllt]
-2. Bei Aufgaben mit nur einem Checkup oder Start == Ende wird ein sichtbarer 1-Tages-Mindestbalken gerendert. [Erfüllt]
-3. Aufgaben ohne Checkups fallen sauber auf Erstellungsdatum / Startdatum zurück. [Erfüllt]
-4. Der Zähler "parallele Aufgaben heute" identifiziert Tasks, deren Checkup-Intervall heute aktiv ist. [Erfüllt]
-5. Tooltips zeigen Checkup-Anzahl und Datumsintervall an. [Erfüllt]
-
-### Phase 2: Backend-Härtung & Technische Schulden
-**Goal**: Beseitigung identifizierter Stabilitätsrisiken im Backend.  
-**Depends on**: Phase 1  
-**Requirements**: DEBT-01, DEBT-02  
-**Status**: Abgeschlossen  
-**Success Criteria**:
-1. `pypdf>=5.0.0` ist in `backend/requirements.txt` enthalten. [Erfüllt]
-2. In `backend/app/database.py` wird die SQLite-Verbindung mit `PRAGMA journal_mode = WAL;` und `PRAGMA busy_timeout = 5000;` initialisiert. [Erfüllt]
-
-### Phase 3: Start & Verifikation der Gesamtanwendung
-**Goal**: Erfolgreicher Start von Backend und Frontend sowie Verifikation der Daten und UI.  
-**Depends on**: Phase 2  
-**Requirements**: APP-01, APP-02, APP-03  
-**Status**: In Durchführung  
-**Success Criteria**:
-1. FastAPI Backend läuft auf Port 8000 und liefert `http://localhost:8000/docs` sowie `/api/capacity`.
-2. Next.js Frontend läuft auf Port 3000 und rendert das aktualisierte Gantt-Diagramm fehlerfrei.
-3. Die parallele Aufgabenlast heute zeigt die aktuellen aktiven Tasks an.
-
+- [x] **Phase 3: Start & Verifikation der Gesamtanwendung** – Start beider Services und End-to-End-Funktionstest.
