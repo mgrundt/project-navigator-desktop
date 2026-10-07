@@ -78,3 +78,4 @@ To establish robust automated quality gates, the following setup is recommended:
 ### End-to-End Testing (Playwright)
 - **Framework:** `@playwright/test`
 - **Scope:** Automated verification of the dual-process startup and primary user flows (add task -> add checkup update -> view on Gantt chart).
+

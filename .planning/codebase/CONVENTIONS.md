@@ -108,3 +108,4 @@ The application is structured as a decoupled two-tier architecture:
 - **Database format:** ISO date string (`YYYY-MM-DD`) or timestamp (`YYYY-MM-DD HH:MM:SS`).
 - **Display format:** German date format (`DD.MM.YYYY`) using `formatDate()` from `lib/utils-app.ts`.
 - **Local Date Parsing:** Use string splitting (`dateStr.slice(0, 10).split("-")`) instead of `new Date(dateStr)` to avoid timezone offsets shifting dates backwards by one day.
+

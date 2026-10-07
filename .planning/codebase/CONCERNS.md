@@ -78,3 +78,4 @@
   - Validation of cascade deletions (e.g., deleting a stream cascades to projects and tasks).
   - Gantt chart time calculations and lane allocation algorithms (`components/employee-gantt.tsx`).
 - **Priority:** High for API endpoint regression testing; Medium for UI unit testing.
+
