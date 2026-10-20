@@ -45,7 +45,14 @@ def enrich_upcoming(tasks: list[dict]) -> list[dict]:
         target = task.get("next_follow_up_date") or task.get("due_date")
         label, days = focus_label(target, today)
         enriched.append({**task, "focus_label": label, "days_until": days if days is not None else 999})
-    enriched.sort(key=lambda t: (t["days_until"] if t["days_until"] is not None else 999, t["title"]))
+    priority_rank = {"Kritisch": 0, "Hoch": 1, "Normal": 2, "Niedrig": 3}
+
+    def sort_key(task: dict) -> tuple:
+        rank = priority_rank.get(task.get("priority") or "Normal", 2)
+        days = task["days_until"] if task["days_until"] is not None else 999
+        return (rank, days, task.get("title") or "")
+
+    enriched.sort(key=sort_key)
     for item in enriched:
         if item["days_until"] == 999:
             item["days_until"] = None

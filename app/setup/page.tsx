@@ -431,9 +431,13 @@ function TasksPanel({
   const [employeeId, setEmployeeId] = useState(employees[0]?.id ?? "");
   const [category, setCategory] = useState(meta.task_categories[0] ?? "Sonstiges");
   const [status, setStatus] = useState(meta.task_statuses[0] ?? "Nicht gestartet");
+  const [priority, setPriority] = useState("Normal");
   const [dueDate, setDueDate] = useState(todayIso());
   const [startDate, setStartDate] = useState(todayIso());
   const [drafts, setDrafts] = useState<Record<string, Partial<Task>>>({});
+  const priorityOptions = meta.task_priorities?.length
+    ? meta.task_priorities
+    : ["Kritisch", "Hoch", "Normal", "Niedrig"];
 
   async function onSubmit(event: FormEvent) {
     event.preventDefault();
@@ -445,6 +449,7 @@ function TasksPanel({
       description,
       category,
       status,
+      priority,
       start_date: startDate,
       due_date: dueDate,
     });
@@ -513,6 +518,14 @@ function TasksPanel({
                 />
               </div>
               <div className="space-y-1.5">
+                <Label>Priorität</Label>
+                <SelectField
+                  value={priority}
+                  onChange={setPriority}
+                  options={priorityOptions.map((item) => ({ value: item, label: item }))}
+                />
+              </div>
+              <div className="space-y-1.5">
                 <Label htmlFor="task-start">Startdatum</Label>
                 <Input id="task-start" type="date" value={startDate} onChange={(event) => setStartDate(event.target.value)} />
               </div>
@@ -542,6 +555,7 @@ function TasksPanel({
                 <TableRow>
                   <TableHead>Aufgabe</TableHead>
                   <TableHead>Status</TableHead>
+                  <TableHead>Priorität</TableHead>
                   <TableHead>Start</TableHead>
                   <TableHead>Fällig</TableHead>
                   <TableHead>Wiedervorlage</TableHead>
@@ -573,6 +587,18 @@ function TasksPanel({
                           }))
                         }
                         options={meta.task_statuses.map((item) => ({ value: item, label: item }))}
+                      />
+                    </TableCell>
+                    <TableCell className="min-w-36">
+                      <SelectField
+                        value={draftValue(task, "priority") || task.priority || "Normal"}
+                        onChange={(value) =>
+                          setDrafts((current) => ({
+                            ...current,
+                            [task.id]: { ...current[task.id], priority: value },
+                          }))
+                        }
+                        options={priorityOptions.map((item) => ({ value: item, label: item }))}
                       />
                     </TableCell>
                     <TableCell>

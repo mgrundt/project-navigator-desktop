@@ -28,6 +28,8 @@ TASK_CATEGORIES = (
     "Dokumentation",
     "Sonstiges",
 )
+TASK_PRIORITIES = ("Kritisch", "Hoch", "Normal", "Niedrig")
+PRIORITY_RANK = {name: index for index, name in enumerate(TASK_PRIORITIES)}
 TODAY_STATUSES = ("In Bearbeitung", "Wartet")
 
 
@@ -123,6 +125,7 @@ def init_db() -> None:
                 description TEXT NOT NULL DEFAULT '',
                 category TEXT NOT NULL DEFAULT 'Sonstiges',
                 status TEXT NOT NULL DEFAULT 'Nicht gestartet',
+                priority TEXT NOT NULL DEFAULT 'Normal',
                 start_date TEXT,
                 due_date TEXT,
                 next_follow_up_date TEXT,
@@ -173,6 +176,7 @@ def init_db() -> None:
         cursor.execute("CREATE INDEX IF NOT EXISTS idx_tasks_employee ON tasks(employee_id);")
         cursor.execute("CREATE INDEX IF NOT EXISTS idx_updates_task ON updates(task_id);")
         _ensure_task_start_date(cursor)
+        _ensure_task_priority(cursor)
 
 
 def _ensure_task_start_date(cursor: sqlite3.Cursor) -> None:
@@ -184,6 +188,19 @@ def _ensure_task_start_date(cursor: sqlite3.Cursor) -> None:
         UPDATE tasks
         SET start_date = DATE(created_at)
         WHERE start_date IS NULL OR TRIM(start_date) = ''
+        """
+    )
+
+
+def _ensure_task_priority(cursor: sqlite3.Cursor) -> None:
+    columns = {row[1] for row in cursor.execute("PRAGMA table_info(tasks)").fetchall()}
+    if "priority" not in columns:
+        cursor.execute("ALTER TABLE tasks ADD COLUMN priority TEXT NOT NULL DEFAULT 'Normal'")
+    cursor.execute(
+        """
+        UPDATE tasks
+        SET priority = 'Normal'
+        WHERE priority IS NULL OR TRIM(priority) = ''
         """
     )
 
@@ -332,6 +349,7 @@ TASK_DETAILS_SELECT = """
         t.description,
         t.category,
         t.status,
+        t.priority,
         t.start_date,
         t.due_date,
         t.next_follow_up_date,
@@ -373,18 +391,20 @@ def add_task(
     description: str = "",
     category: str = "Sonstiges",
     status: str = "Nicht gestartet",
+    priority: str = "Normal",
     due_date: Optional[str] = None,
     start_date: Optional[str] = None,
 ) -> dict[str, Any]:
     item_id = new_id()
     created = now_str()
     resolved_start = start_date or created[:10]
+    resolved_priority = priority if priority in TASK_PRIORITIES else "Normal"
     with get_connection() as conn:
         conn.execute(
             """INSERT INTO tasks (
-                id, project_id, employee_id, title, description, category, status,
+                id, project_id, employee_id, title, description, category, status, priority,
                 start_date, due_date, last_check_date, created_at
-               ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+               ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
             (
                 item_id,
                 project_id,
@@ -393,6 +413,7 @@ def add_task(
                 description.strip(),
                 category,
                 status,
+                resolved_priority,
                 resolved_start,
                 due_date,
                 created,
@@ -411,6 +432,7 @@ def update_task(task_id: str, fields: dict[str, Any]) -> dict[str, Any] | None:
         "description",
         "category",
         "status",
+        "priority",
         "start_date",
         "due_date",
         "next_follow_up_date",
@@ -446,6 +468,7 @@ def list_today_tasks() -> list[dict[str, Any]]:
             t.description,
             t.category,
             t.status,
+            t.priority,
             t.start_date,
             t.due_date,
             t.next_follow_up_date,

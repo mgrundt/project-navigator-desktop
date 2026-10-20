@@ -37,6 +37,7 @@ type TaskForm = {
   employee_id: string;
   category: string;
   status: string;
+  priority: string;
   start_date: string;
   due_date: string;
   next_follow_up_date: string;
@@ -60,6 +61,7 @@ function formFromTask(task: Task): TaskForm {
     employee_id: task.employee_id ?? "",
     category: task.category,
     status: task.status,
+    priority: task.priority || "Normal",
     start_date: dateInput(task.start_date),
     due_date: dateInput(task.due_date),
     next_follow_up_date: dateInput(task.next_follow_up_date),
@@ -145,6 +147,7 @@ export function TaskEditDialog({
         employee_id: form.employee_id,
         category: form.category,
         status: form.status,
+        priority: form.priority,
         start_date: form.start_date || null,
         due_date: form.due_date || null,
         next_follow_up_date: form.next_follow_up_date || null,
@@ -267,6 +270,17 @@ export function TaskEditDialog({
                     value={form.status}
                     onChange={(value) => update("status", value)}
                     options={meta.task_statuses.map((item) => ({ value: item, label: item }))}
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <Label>Priorität</Label>
+                  <SelectField
+                    value={form.priority}
+                    onChange={(value) => update("priority", value)}
+                    options={(meta.task_priorities.length > 0
+                      ? meta.task_priorities
+                      : ["Kritisch", "Hoch", "Normal", "Niedrig"]
+                    ).map((item) => ({ value: item, label: item }))}
                   />
                 </div>
                 <div className="space-y-1.5">

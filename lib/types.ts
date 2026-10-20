@@ -31,6 +31,7 @@ export type Task = {
   description: string;
   category: string;
   status: string;
+  priority: string;
   start_date?: string | null;
   due_date: string | null;
   next_follow_up_date: string | null;
@@ -116,4 +117,5 @@ export type Meta = {
   task_statuses: string[];
   project_statuses: string[];
   task_categories: string[];
+  task_priorities: string[];
 };

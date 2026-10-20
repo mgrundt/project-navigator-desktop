@@ -16,10 +16,12 @@ import { LEITPLANKEN, formatDate } from "@/lib/utils-app";
 import { useApi } from "@/components/use-api";
 import { PageHeader } from "@/components/page-header";
 import { EmptyState, LoadingState } from "@/components/states";
-import { FocusBadge, StatusBadge } from "@/components/status-badge";
+import { FocusBadge, PriorityBadge, StatusBadge } from "@/components/status-badge";
 import { TaskEditDialog } from "@/components/task-edit-dialog";
+import { SelectField } from "@/components/select-field";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
 import {
   Table,
   TableBody,
@@ -34,6 +36,38 @@ type DashboardPageData = {
   meta: Meta;
 };
 
+type SortMode = "priority" | "focus" | "employee";
+
+const PRIORITY_RANK: Record<string, number> = {
+  Kritisch: 0,
+  Hoch: 1,
+  Normal: 2,
+  Niedrig: 3,
+};
+
+function sortTasks(tasks: UpcomingTask[], mode: SortMode): UpcomingTask[] {
+  const copy = [...tasks];
+  copy.sort((a, b) => {
+    const rankA = PRIORITY_RANK[a.priority || "Normal"] ?? 2;
+    const rankB = PRIORITY_RANK[b.priority || "Normal"] ?? 2;
+    const daysA = a.days_until ?? 999;
+    const daysB = b.days_until ?? 999;
+    const nameA = a.employee_name || "";
+    const nameB = b.employee_name || "";
+    const titleA = a.title || "";
+    const titleB = b.title || "";
+
+    if (mode === "priority") {
+      return rankA - rankB || daysA - daysB || titleA.localeCompare(titleB, "de");
+    }
+    if (mode === "employee") {
+      return nameA.localeCompare(nameB, "de") || rankA - rankB || daysA - daysB || titleA.localeCompare(titleB, "de");
+    }
+    return daysA - daysB || rankA - rankB || titleA.localeCompare(titleB, "de");
+  });
+  return copy;
+}
+
 export default function DashboardPage() {
   const loader = useMemo(
     () => async () => {
@@ -44,11 +78,22 @@ export default function DashboardPage() {
   );
   const { data, loading, setData } = useApi(loader);
   const [selected, setSelected] = useState<UpcomingTask | null>(null);
+  const [sortMode, setSortMode] = useState<SortMode>("priority");
+  const [employeeFilter, setEmployeeFilter] = useState("all");
 
   async function refreshDashboard() {
     const dashboard = await api.dashboard();
     setData((current) => (current ? { ...current, dashboard } : current));
   }
+
+  const visibleTasks = useMemo(() => {
+    if (!data) return [];
+    const filtered =
+      employeeFilter === "all"
+        ? data.dashboard.upcoming
+        : data.dashboard.upcoming.filter((task) => task.employee_id === employeeFilter);
+    return sortTasks(filtered, sortMode);
+  }, [data, employeeFilter, sortMode]);
 
   if (loading || !data) {
     return <LoadingState />;
@@ -61,6 +106,13 @@ export default function DashboardPage() {
     { label: "Offene Aufgaben", value: dashboard.stats.open_tasks, icon: ListTodo },
     { label: "Erledigte Aufgaben", value: dashboard.stats.done_tasks, icon: CheckCircle2 },
   ];
+
+  const sortDescription =
+    sortMode === "priority"
+      ? "Sortiert nach Priorität, dann Fokus/Wiedervorlage"
+      : sortMode === "employee"
+        ? "Gruppiert nach Mitarbeiter, darin nach Priorität"
+        : "Sortiert nach Wiedervorlage bzw. Fälligkeit, dann Priorität";
 
   return (
     <div>
@@ -143,17 +195,50 @@ export default function DashboardPage() {
       </div>
 
       <Card className="mt-6">
-        <CardHeader>
-          <CardTitle>Nächste anstehende Aufgaben</CardTitle>
-          <CardDescription>Sortiert nach Wiedervorlage bzw. Fälligkeit</CardDescription>
+        <CardHeader className="gap-4 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <CardTitle>Nächste anstehende Aufgaben</CardTitle>
+            <CardDescription>{sortDescription}</CardDescription>
+          </div>
+          <div className="grid w-full gap-3 sm:w-auto sm:grid-cols-2">
+            <div className="space-y-1.5 sm:min-w-48">
+              <Label>Sortierung</Label>
+              <SelectField
+                value={sortMode}
+                onChange={(value) => setSortMode(value as SortMode)}
+                options={[
+                  { value: "priority", label: "Priorität" },
+                  { value: "employee", label: "Mitarbeiter + Priorität" },
+                  { value: "focus", label: "Fokus / Wiedervorlage" },
+                ]}
+              />
+            </div>
+            <div className="space-y-1.5 sm:min-w-48">
+              <Label>Mitarbeiter</Label>
+              <SelectField
+                value={employeeFilter}
+                onChange={setEmployeeFilter}
+                options={[
+                  { value: "all", label: "Alle Mitarbeiter" },
+                  ...dashboard.employees.map((employee) => ({
+                    value: employee.id,
+                    label: employee.name,
+                  })),
+                ]}
+              />
+            </div>
+          </div>
         </CardHeader>
         <CardContent>
           {dashboard.upcoming.length === 0 ? (
             <EmptyState title="Alle Aufgaben erledigt" text="Aktuell keine offenen Wiedervorlagen." />
+          ) : visibleTasks.length === 0 ? (
+            <EmptyState title="Keine Aufgaben für diese Auswahl" text="Filter oder Sortierung anpassen." />
           ) : (
             <Table>
               <TableHeader>
                 <TableRow>
+                  <TableHead>Prio</TableHead>
                   <TableHead>Aufgabe</TableHead>
                   <TableHead>Projekt</TableHead>
                   <TableHead>Wer</TableHead>
@@ -166,12 +251,15 @@ export default function DashboardPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {dashboard.upcoming.map((task) => (
+                {visibleTasks.map((task) => (
                   <TableRow
                     key={task.id}
                     className="cursor-pointer"
                     onClick={() => setSelected(task)}
                   >
+                    <TableCell>
+                      <PriorityBadge priority={task.priority || "Normal"} />
+                    </TableCell>
                     <TableCell className="font-medium">{task.title}</TableCell>
                     <TableCell>{task.project_name}</TableCell>
                     <TableCell>{task.employee_name}</TableCell>

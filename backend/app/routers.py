@@ -44,6 +44,7 @@ def meta() -> MetaOut:
         task_statuses=list(db.TASK_STATUSES),
         project_statuses=list(db.PROJECT_STATUSES),
         task_categories=list(db.TASK_CATEGORIES),
+        task_priorities=list(db.TASK_PRIORITIES),
     )
 
 
@@ -145,6 +146,8 @@ def create_task(payload: TaskCreate) -> TaskOut:
         raise HTTPException(status_code=400, detail="Projekt nicht gefunden")
     if db.get_employee(payload.employee_id) is None:
         raise HTTPException(status_code=400, detail="Mitarbeiter nicht gefunden")
+    if payload.priority not in db.TASK_PRIORITIES:
+        raise HTTPException(status_code=400, detail="Ungültige Priorität")
     return TaskOut(
         **db.add_task(
             project_id=payload.project_id,
@@ -153,6 +156,7 @@ def create_task(payload: TaskCreate) -> TaskOut:
             description=payload.description,
             category=payload.category,
             status=payload.status,
+            priority=payload.priority,
             start_date=_date_str(payload.start_date),
             due_date=_date_str(payload.due_date),
         )
@@ -162,6 +166,8 @@ def create_task(payload: TaskCreate) -> TaskOut:
 @router.patch("/tasks/{task_id}", response_model=TaskOut)
 def patch_task(task_id: str, payload: TaskUpdate) -> TaskOut:
     fields: dict[str, Any] = payload.model_dump(exclude_unset=True)
+    if "priority" in fields and fields["priority"] not in db.TASK_PRIORITIES:
+        raise HTTPException(status_code=400, detail="Ungültige Priorität")
     for key in ("start_date", "due_date", "next_follow_up_date"):
         if key in fields:
             fields[key] = _date_str(fields[key])

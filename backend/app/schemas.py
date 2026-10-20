@@ -62,6 +62,7 @@ class TaskCreate(BaseModel):
     description: str = ""
     category: str = "Sonstiges"
     status: str = "Nicht gestartet"
+    priority: str = "Normal"
     start_date: Optional[date] = None
     due_date: Optional[date] = None
 
@@ -71,6 +72,7 @@ class TaskUpdate(BaseModel):
     description: Optional[str] = None
     category: Optional[str] = None
     status: Optional[str] = None
+    priority: Optional[str] = None
     start_date: Optional[date] = None
     due_date: Optional[date] = None
     next_follow_up_date: Optional[date] = None
@@ -115,6 +117,7 @@ class TaskOut(BaseModel):
     description: str = ""
     category: str
     status: str
+    priority: str = "Normal"
     start_date: Optional[str] = None
     due_date: Optional[str] = None
     next_follow_up_date: Optional[str] = None
@@ -189,3 +192,4 @@ class MetaOut(BaseModel):
     task_statuses: list[str]
     project_statuses: list[str]
     task_categories: list[str]
+    task_priorities: list[str] = Field(default_factory=list)

@@ -37,3 +37,19 @@ export function FocusBadge({ label, days }: { label: string; days: number | null
     </Badge>
   );
 }
+
+export function PriorityBadge({ priority }: { priority: string }) {
+  return (
+    <Badge
+      variant={priority === "Kritisch" || priority === "Hoch" ? "default" : "secondary"}
+      className={cn(
+        priority === "Kritisch" && "bg-red-600 text-white hover:bg-red-600",
+        priority === "Hoch" && "bg-orange-500 text-white hover:bg-orange-500",
+        priority === "Normal" && "bg-slate-100 text-slate-700",
+        priority === "Niedrig" && "bg-muted text-muted-foreground",
+      )}
+    >
+      {priority || "Normal"}
+    </Badge>
+  );
+}

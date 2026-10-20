@@ -73,6 +73,7 @@ export const api = {
     description?: string;
     category: string;
     status: string;
+    priority?: string;
     start_date?: string | null;
     due_date?: string | null;
   }) => request<Task>("/api/tasks", { method: "POST", body: JSON.stringify(body) }),
