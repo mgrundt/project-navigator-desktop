@@ -69,6 +69,8 @@ export type DashboardData = {
     done_tasks: number;
   };
   upcoming: UpcomingTask[];
+  projects: Project[];
+  employees: Employee[];
 };
 
 export type CapacityData = {

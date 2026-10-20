@@ -7,25 +7,25 @@
 
 ### Navigation & Data Basis
 
-- [ ] **NAV-01**: Der Menüpunkt „Heute im Team“ (`/heute`) ist aus der Desktop-Sidebar und dem mobilen Header in `components/app-shell.tsx` entfernt.
-- [ ] **DASH-01**: `GET /api/dashboard` (bzw. Frontend Loader) stellt Projekte und Mitarbeiter bereit, sodass Dropdowns im Dashboard sofort ohne Zusatz-Roundtrips befüllt werden.
+- [x] **NAV-01**: Der Menüpunkt „Heute im Team“ (`/heute`) ist aus der Desktop-Sidebar und dem mobilen Header in `components/app-shell.tsx` entfernt.
+- [x] **DASH-01**: `GET /api/dashboard` (bzw. Frontend Loader) stellt Projekte und Mitarbeiter bereit, sodass Dropdowns im Dashboard sofort ohne Zusatz-Roundtrips befüllt werden.
 
 ### Task Edit & Delete Modal
 
-- [ ] **MODAL-01**: Klick auf eine Zeile oder einen Bearbeiten-Button in der Tabelle „Nächste anstehende Aufgaben“ öffnet ein modales Dialogfenster (`Dialog`).
-- [ ] **MODAL-02**: Alle Parameter der Aufgabe sind im Modal editierbar:
+- [x] **MODAL-01**: Klick auf eine Zeile oder einen Bearbeiten-Button in der Tabelle „Nächste anstehende Aufgaben“ öffnet ein modales Dialogfenster (`Dialog`).
+- [x] **MODAL-02**: Alle Parameter der Aufgabe sind im Modal editierbar:
   - Titel & Beschreibung
   - Projekt (Dropdown)
   - Zuständiger Mitarbeiter (Dropdown)
   - Kategorie & Status (Dropdown)
   - Startdatum & Deadline (Datumsauswahl)
   - Nächste Wiedervorlage (Datumsauswahl)
-- [ ] **MODAL-03**: Aufgabe kann direkt im Modal gelöscht werden mit vorgeschalteter Bestätigungsabfrage (`AlertDialog`). Nach dem Löschen schließt das Modal und das Dashboard aktualisiert sich.
+- [x] **MODAL-03**: Aufgabe kann direkt im Modal gelöscht werden mit vorgeschalteter Bestätigungsabfrage (`AlertDialog`). Nach dem Löschen schließt das Modal und das Dashboard aktualisiert sich.
 
 ### Checkup-Workflow im Dashboard
 
-- [ ] **CHECKUP-01**: Im Task-Modal (oder inline) kann direkt ein neuer Checkup eingetragen werden (Status-Auswahl, Kommentartext, Wiedervorlage-Datum).
-- [ ] **CHECKUP-02**: Die vollständige Checkup-Historie der ausgewählten Aufgabe (Datum, Uhrzeit, Status, Kommentar, Wiedervorlage) ist im Modal einsehbar.
+- [x] **CHECKUP-01**: Im Task-Modal (oder inline) kann direkt ein neuer Checkup eingetragen werden (Status-Auswahl, Kommentartext, Wiedervorlage-Datum).
+- [x] **CHECKUP-02**: Die vollständige Checkup-Historie der ausgewählten Aufgabe (Datum, Uhrzeit, Status, Kommentar, Wiedervorlage) ist im Modal einsehbar.
 
 ---
 
@@ -47,10 +47,10 @@
 
 | Requirement | Phase | Status |
 |---|---|---|
-| NAV-01 | Phase 4: Navigation & Data Basis | Pending |
-| DASH-01 | Phase 4: Navigation & Data Basis | Pending |
-| MODAL-01 | Phase 5: Task Edit & Delete Modal | Pending |
-| MODAL-02 | Phase 5: Task Edit & Delete Modal | Pending |
-| MODAL-03 | Phase 5: Task Edit & Delete Modal | Pending |
-| CHECKUP-01 | Phase 6: Checkup-Workflow & Historie im Dashboard | Pending |
-| CHECKUP-02 | Phase 6: Checkup-Workflow & Historie im Dashboard | Pending |
+| NAV-01 | Phase 4: Navigation & Data Basis | Done |
+| DASH-01 | Phase 4: Navigation & Data Basis | Done |
+| MODAL-01 | Phase 5: Task Edit & Delete Modal | Done |
+| MODAL-02 | Phase 5: Task Edit & Delete Modal | Done |
+| MODAL-03 | Phase 5: Task Edit & Delete Modal | Done |
+| CHECKUP-01 | Phase 6: Checkup-Workflow & Historie im Dashboard | Done |
+| CHECKUP-02 | Phase 6: Checkup-Workflow & Historie im Dashboard | Done |

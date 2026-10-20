@@ -155,6 +155,8 @@ class UpcomingTask(TaskOut):
 class DashboardOut(BaseModel):
     stats: DashboardStats
     upcoming: list[UpcomingTask]
+    projects: list[ProjectOut] = Field(default_factory=list)
+    employees: list[EmployeeOut] = Field(default_factory=list)
 
 
 class CapacityBucket(BaseModel):

@@ -25,15 +25,15 @@ Zentralisierung der Arbeitsabläufe direkt im Dashboard: Aufgaben aus der Dashbo
 - [x] SQLite Concurrency durch WAL-Modus und `busy_timeout` in `backend/app/database.py` abgesichert.
 - [x] Checkup-Historie in den Aufgabenkarten ausklappbar.
 
-### Active (v2.0)
+### Validated (v2.0)
 
-- [ ] **NAV-01**: Menüpunkt „Heute im Team“ (`/heute`) aus Desktop- und Mobil-Navigation entfernen.
-- [ ] **DASH-01**: `GET /api/dashboard` liefert Projekte und Mitarbeiter für Dropdowns im Edit-Modal mit.
-- [ ] **MODAL-01**: Klick auf eine Zeile/Aktion in der Dashboard-Tabelle öffnet ein modales Task-Dialogfenster.
-- [ ] **MODAL-02**: Alle Parameter der Aufgabe sind im Modal editierbar (Titel, Beschreibung, Projekt, Mitarbeiter, Kategorie, Status, Startdatum, Deadline, Wiedervorlage).
-- [ ] **MODAL-03**: Aufgabe kann direkt im Modal gelöscht werden (mit Sicherheitsbestätigung via AlertDialog).
-- [ ] **CHECKUP-01**: Neues Checkup-Update (Status, Kommentar, Wiedervorlage) direkt im Dashboard-Task-Modal erfassen.
-- [ ] **CHECKUP-02**: Vollständige Checkup-Historie der Aufgabe im Modal einsehen.
+- [x] **NAV-01**: Menüpunkt „Heute im Team“ (`/heute`) aus Desktop- und Mobil-Navigation entfernen.
+- [x] **DASH-01**: `GET /api/dashboard` liefert Projekte und Mitarbeiter für Dropdowns im Edit-Modal mit.
+- [x] **MODAL-01**: Klick auf eine Zeile/Aktion in der Dashboard-Tabelle öffnet ein modales Task-Dialogfenster.
+- [x] **MODAL-02**: Alle Parameter der Aufgabe sind im Modal editierbar (Titel, Beschreibung, Projekt, Mitarbeiter, Kategorie, Status, Startdatum, Deadline, Wiedervorlage).
+- [x] **MODAL-03**: Aufgabe kann direkt im Modal gelöscht werden (mit Sicherheitsbestätigung via AlertDialog).
+- [x] **CHECKUP-01**: Neues Checkup-Update (Status, Kommentar, Wiedervorlage) direkt im Dashboard-Task-Modal erfassen.
+- [x] **CHECKUP-02**: Vollständige Checkup-Historie der Aufgabe im Modal einsehen.
 
 ### Out of Scope
 

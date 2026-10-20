@@ -51,7 +51,9 @@ def meta() -> MetaOut:
 def dashboard() -> DashboardOut:
     stats = DashboardStats(**db.get_dashboard_stats())
     upcoming = [UpcomingTask(**item) for item in pdf_reports.enrich_upcoming(db.list_tasks())]
-    return DashboardOut(stats=stats, upcoming=upcoming)
+    projects = [ProjectOut(**p) for p in db.list_projects()]
+    employees = [EmployeeOut(**e) for e in db.list_employees()]
+    return DashboardOut(stats=stats, upcoming=upcoming, projects=projects, employees=employees)
 
 
 @router.get("/capacity", response_model=CapacityOut)

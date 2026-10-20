@@ -8,13 +8,11 @@ import {
   LayoutDashboard,
   Layers,
   Settings,
-  Users,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const NAV = [
   { href: "/", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/heute", label: "Heute im Team", icon: Users },
   { href: "/kapazitaeten", label: "Kapazitäten", icon: BarChart3 },
   { href: "/uebersicht", label: "Übersicht", icon: Layers },
   { href: "/setup", label: "Setup", icon: Settings },

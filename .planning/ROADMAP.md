@@ -12,10 +12,10 @@ Zentralisierung der Aufgabenbearbeitung und Checkups im Dashboard; Bereinigung d
 
 ### Phases v2.0
 
-- [ ] **Phase 4: Navigation & Data Basis** – Menüpunkt „Heute im Team“ entfernen; Dashboard API/Loader um Projekte & Mitarbeiter erweitern.
-- [ ] **Phase 5: Task Edit & Delete Modal** – Interaktives Modal in der Dashboard-Tabelle zur vollständigen Bearbeitung und Löschung aller Task-Parameter.
-- [ ] **Phase 6: Checkup-Workflow & Historie im Dashboard** – Neuer Checkup-Eintrag & scrollbare Verlaufshistorie direkt im Task-Modal.
-- [ ] **Phase 7: Live-Verifikation & Workflow-Test** – End-to-End-Test der Änderungen im laufenden System.
+- [x] **Phase 4: Navigation & Data Basis** – Menüpunkt „Heute im Team“ entfernen; Dashboard API/Loader um Projekte & Mitarbeiter erweitern.
+- [x] **Phase 5: Task Edit & Delete Modal** – Interaktives Modal in der Dashboard-Tabelle zur vollständigen Bearbeitung und Löschung aller Task-Parameter.
+- [x] **Phase 6: Checkup-Workflow & Historie im Dashboard** – Neuer Checkup-Eintrag & scrollbare Verlaufshistorie direkt im Task-Modal.
+- [x] **Phase 7: Live-Verifikation & Workflow-Test** – End-to-End-Test der Änderungen im laufenden System.
 
 ### Phase Details v2.0
 
